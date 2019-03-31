@@ -34,7 +34,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ShowViewHolder
     public void onBindViewHolder(@NonNull ShowViewHolder showViewHolder, int position) {
        Show show = showList.get(position );
 
-       String showType = show.getType();
+       //String showType = show.getType();
        String showName = show.getTitle();
        //String showGenre = show.getGenre();
        String showImageUrl = show.getPosterpath();
