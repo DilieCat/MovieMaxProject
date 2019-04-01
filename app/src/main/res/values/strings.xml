@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MovieMax</string>
+    <string name="left">&#60;</string>
 </resources>
