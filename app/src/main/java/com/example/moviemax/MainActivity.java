@@ -1,9 +1,13 @@
 package com.example.moviemax;
 
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.menu.ShowableListMenu;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -18,12 +22,23 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class  MainActivity extends AppCompatActivity {
+public class  MainActivity extends AppCompatActivity implements View.OnClickListener {
     private RecyclerView recyclerView;
     private ShowAdapter showAdapter;
     private ArrayList<Show> showArrayList;
     private RequestQueue requestQueue;
 
+    //Variables used for the URL builder.
+    private final String ROVER_BASE_URL = "https://api.themoviedb.org/3/movie/popular";
+    private final static String PARAM_PAGE = "page";
+    private final static String LANGUAGE = "language";
+    private final static String LANGUAGE_TYPE = "en-US";
+    private final static String PARAM_API = "api_key";
+    private final static String PARAM_APIKEY = "ee960f573833509472cb7ab57f055c12";
+
+    private int pageNumber = 1;
+
+    private Button middleBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,11 +52,25 @@ public class  MainActivity extends AppCompatActivity {
         showArrayList = new ArrayList<>();
         requestQueue = Volley.newRequestQueue(this);
 
-        parseJSON();
+        Button leftPageBtn = findViewById(R.id.leftPageBtn);
+        Button rightPageBtn = findViewById(R.id.rightPageBtn);
+        middleBtn = findViewById(R.id.middleBtn);
+
+        middleBtn.setText(Integer.toString(pageNumber));
+        leftPageBtn.setOnClickListener(this);
+        rightPageBtn.setOnClickListener(this);
+
+        parseJSON(pageNumber);
+        //show
     }
 
-    private void parseJSON(){
-        String url = "https://api.themoviedb.org/3/movie/popular?api_key=ee960f573833509472cb7ab57f055c12&language=en-US&page=1";
+    private void parseJSON(int pageNumber){
+        if (showArrayList.size() > 0) {
+            showArrayList.clear();
+        }
+
+
+        String url = buildUrl(pageNumber);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -72,6 +101,7 @@ public class  MainActivity extends AppCompatActivity {
 
                             showAdapter = new ShowAdapter(MainActivity.this, showArrayList);
                             recyclerView.setAdapter(showAdapter);
+                            showAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -86,4 +116,33 @@ public class  MainActivity extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);
 
     }
+
+    //URL BUILDER
+    private String buildUrl(int pageNumber) {
+        Uri builtUri = Uri.parse(ROVER_BASE_URL).buildUpon()
+                .appendQueryParameter(PARAM_API, PARAM_APIKEY)
+                .appendQueryParameter(LANGUAGE, LANGUAGE_TYPE)
+                .appendQueryParameter(PARAM_PAGE, Integer.toString(pageNumber))
+                .build();
+        return builtUri.toString();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.rightPageBtn:
+                pageNumber++;
+                parseJSON(pageNumber);
+                break;
+
+            case R.id.leftPageBtn:
+                if (pageNumber > 1) {
+                    pageNumber--;
+                    parseJSON(pageNumber);
+                    break;
+                }
+        }
+        middleBtn.setText(Integer.toString(pageNumber));
+    }
+
 }
