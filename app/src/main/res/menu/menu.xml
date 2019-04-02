@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/popularity"
+        android:title="Popularity"
+        app:showAsAction="never"/>
+    <item android:id="@+id/genre"
+        android:title="Genre"
+        app:showAsAction="never"/>
+    <item android:id="@+id/rating"
+        android:title="Rating"
+        app:showAsAction="never"/>
+    <item android:id="@+id/latest"
+        android:title="Latest"
+        app:showAsAction="never"/>
+    <item android:id="@+id/upcoming"
+        android:title="Upcoming"
+        app:showAsAction="never"/>
+    <item android:id="@+id/now_playing"
+        android:title="Now playing"
+        app:showAsAction="never"/>
 </menu>
