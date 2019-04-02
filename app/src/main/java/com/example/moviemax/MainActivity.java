@@ -1,5 +1,6 @@
 package com.example.moviemax;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -62,6 +63,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         middleBtn = findViewById(R.id.middleBtn);
         totalPagesBtn = findViewById(R.id.totalPagesBtn);
         Button startPageBtn = findViewById(R.id.startPageBtn);
+        Button testButton = findViewById(R.id.testButton);
 
         middleBtn.setText(Integer.toString(pageNumber));
         startPageBtn.setText("1");
@@ -69,6 +71,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         rightPageBtn.setOnClickListener(this);
         totalPagesBtn.setOnClickListener(this);
         startPageBtn.setOnClickListener(this);
+        testButton.setOnClickListener(this);
 
         parseJSON(pageNumber);
     }
@@ -176,9 +179,13 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 parseJSON(pageNumber);
                 break;
 
+            case R.id.testButton:
+                Intent singUp = new Intent(this, Signup.class);
+                startActivity(singUp);
+                break;
+
 
         }
         middleBtn.setText(Integer.toString(pageNumber));
     }
-
 }

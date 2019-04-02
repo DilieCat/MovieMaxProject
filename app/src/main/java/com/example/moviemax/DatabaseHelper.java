@@ -29,31 +29,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_TABLE_ShowInList = "CREATE TABLE "+ TABLE_ShowInList + "(" + KEY_ID +"ID INTEGER PRIMARY KEY AUTOINCREMENT,"+ ShowInList_COL1 + "INTEGER,"+ ShowInList_COL2 +" INTEGER)";
     private static final String CREATE_TABLE_ShowList = "CREATE TABLE "+ TABLE_ShowList + "(" + ShowList_COL1 + "ID INTEGER PRIMARY KEY," + ShowList_COL2 +" TEXT)";
-    private static final String CREATE_TABLE_User = "create table User (id integer primary key, firstName text, lastName text, age int, email text, password text)";
+    private static final String CREATE_TABLE_User = "CREATE TABLE User (ID INTEGER primary key autoincrement, firstName TEXT, lastName TEXT, age INTEGER, email TEXT, password TEXT)";
 
 
     public DatabaseHelper( Context context) {
-        super(context, DATABASE_NAME, null, 2);
-        SQLiteDatabase db = this.getWritableDatabase();
+        super(context, DATABASE_NAME, null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_TABLE_ShowInList);
-        db.execSQL(CREATE_TABLE_ShowList);
         db.execSQL(CREATE_TABLE_User);
+       // db.execSQL(CREATE_TABLE_ShowInList);
+        //db.execSQL(CREATE_TABLE_ShowList);
+
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //On upgrade drop older tables
-        db.execSQL("DROP TABLE IF EXISTS "+TABLE_ShowList);
-        db.execSQL("DROP TABLE IF EXISTS "+TABLE_ShowInList);
+        //db.execSQL("DROP TABLE IF EXISTS "+TABLE_ShowList);
+        //db.execSQL("DROP TABLE IF EXISTS "+TABLE_ShowInList);
         db.execSQL("DROP TABLE IF EXISTS User");
         //Create new tables
         onCreate(db);
     }
-
+/*
     public long createShowList(String ShowListName){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -67,6 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return ShowList_id;
     }
 
+
     public long addShow(int ShowList_id, Show film){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -76,9 +77,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long ShowInList_id = db.insert(TABLE_ShowInList,null, contentValues);
 
-        Log.d(TAG, "addShow: Adding" + film + " to "+TABLE_ShowInList);
+        Log.d(TAG, "addShow: Adding" + film + " to "+ TABLE_ShowInList);
 
         return ShowInList_id;
+    }
+    */
+
+    //Registeren van user
+    public boolean insertUser(String name, String lastName, int age, String email, String password){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("firstName", name);
+        contentValues.put("lastName", lastName);
+        contentValues.put("age", age);
+        contentValues.put("email", email);
+        contentValues.put("password", password);
+        db.insert("User", null, contentValues);
+        return true;
     }
 
 
