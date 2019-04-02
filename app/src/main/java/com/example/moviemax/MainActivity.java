@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -45,10 +46,17 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     private Button middleBtn;
     private Button totalPagesBtn;
 
+    //database
+    private DatabaseHelper mDatabaseHelper;
+    private Button addBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //database
+        mDatabaseHelper = new DatabaseHelper(this);
 
         recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
@@ -182,4 +190,16 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         middleBtn.setText(Integer.toString(pageNumber));
     }
 
+    //Vanaf hier database
+    public void createShowList(String showListName){
+        boolean inserted;
+        long insertData = mDatabaseHelper.createShowList(showListName);
+        if(insertData == -1){
+            inserted = false;
+            Toast.makeText(this, "Something went wrong!", Toast.LENGTH_LONG).show();
+        } else{
+            inserted = true;
+            Toast.makeText(this, "List successfully created", Toast.LENGTH_LONG).show();
+        }
+    }
 }
