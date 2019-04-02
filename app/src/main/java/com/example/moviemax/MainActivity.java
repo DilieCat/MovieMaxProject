@@ -149,7 +149,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-
     //URL BUILDER
     private String buildUrl(int pageNumber) {
         Uri builtUri = Uri.parse(ROVER_BASE_URL).buildUpon()

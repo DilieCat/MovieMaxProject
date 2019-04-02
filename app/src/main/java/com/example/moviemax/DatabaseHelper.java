@@ -10,10 +10,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
 
-    private static final String DATABASE_NAME = "MovieMaxDatabase";
+    private static final String DATABASE_NAME = "MovieMaxDatabase.db";
 
     private static final String TABLE_ShowInList = "ShowInList";
     private static final String TABLE_ShowList = "ShowList";
+    private static final String TABLE_User = "User";
 
     private static final String KEY_ID = "ID";
 
@@ -23,18 +24,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String ShowList_COL1 = "showListID";
     private static final String ShowList_COL2 = "name";
 
-    private static final String CREATE_TABLE_ShowInList = "CREATE TABLE "+ TABLE_ShowInList + "(" + KEY_ID +"INTEGER PRIMARY KEY AUTOINCREMENT,"+ ShowInList_COL1 + "INTEGER,"+ ShowInList_COL2 +" INTEGER)";
-    private static final String CREATE_TABLE_ShowList = "CREATE TABLE "+ TABLE_ShowList + "(" + ShowList_COL1 + "INTEGER PRIMARY KEY AUTOINCREMENT," + ShowList_COL2 +" TEXT)";
+    private static final String User_COL1 = "userId";
+    private static final String Usert_COL2 = "firstName";
+
+    private static final String CREATE_TABLE_ShowInList = "CREATE TABLE "+ TABLE_ShowInList + "(" + KEY_ID +"ID INTEGER PRIMARY KEY AUTOINCREMENT,"+ ShowInList_COL1 + "INTEGER,"+ ShowInList_COL2 +" INTEGER)";
+    private static final String CREATE_TABLE_ShowList = "CREATE TABLE "+ TABLE_ShowList + "(" + ShowList_COL1 + "ID INTEGER PRIMARY KEY," + ShowList_COL2 +" TEXT)";
+    private static final String CREATE_TABLE_User = "create table User (id integer primary key, firstName text, lastName text, age int, email text, password text)";
 
 
     public DatabaseHelper( Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, 2);
+        SQLiteDatabase db = this.getWritableDatabase();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_ShowInList);
         db.execSQL(CREATE_TABLE_ShowList);
+        db.execSQL(CREATE_TABLE_User);
     }
 
     @Override
@@ -42,6 +49,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //On upgrade drop older tables
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_ShowList);
         db.execSQL("DROP TABLE IF EXISTS "+TABLE_ShowInList);
+        db.execSQL("DROP TABLE IF EXISTS User");
         //Create new tables
         onCreate(db);
     }
