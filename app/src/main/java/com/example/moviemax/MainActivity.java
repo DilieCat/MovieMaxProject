@@ -32,6 +32,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     private ShowAdapter showAdapter;
     private ArrayList<Show> showArrayList;
     private RequestQueue requestQueue;
+    private String url = "";
 
     //Variables used for the URL builder.
 
@@ -60,7 +61,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         rightPageBtn.setOnClickListener(this);
 
         parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
-                apiLinks.FILTER[1],
+                apiLinks.FILTER[3],
                 apiLinks.LANGUAGE_TYPE[0],
                 pageNumber,
                 apiLinks.REGIO[0]);
@@ -83,6 +84,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                         apiLinks.LANGUAGE_TYPE[0],
                         pageNumber,
                         apiLinks.REGIO[0]);
+                System.out.println(url);
                 break;
             case R.id.popularity:
                 parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
@@ -97,11 +99,10 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                         apiLinks.LANGUAGE_TYPE[0],
                         pageNumber,
                         apiLinks.REGIO[0]);
-                System.out.println();
                 break;
             case R.id.latest:
                 parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
-                        apiLinks.FILTER[2],
+                        apiLinks.FILTER[3],
                         apiLinks.LANGUAGE_TYPE[0],
                         pageNumber,
                         apiLinks.REGIO[0]);
@@ -112,6 +113,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                         apiLinks.LANGUAGE_TYPE[0],
                         pageNumber,
                         apiLinks.REGIO[0]);
+                System.out.println();
                 break;
             case R.id.now_playing:
                 parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
@@ -122,11 +124,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         }
         showArrayList = new ArrayList<>();
         requestQueue = Volley.newRequestQueue(this);
-        parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
-                apiLinks.FILTER[apiLinks.FILTER.length -1],
-                apiLinks.LANGUAGE_TYPE[0],
-                pageNumber,
-                apiLinks.REGIO[0]);
 
         return true;
 
@@ -189,11 +186,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     //URL BUILDER
     public String buildUrl(String searchType, String filter, String language, int pageNumber, String regio) {
 
-//        if(!searchType.equals("") && pageNumber != 0 && !regio.equals("")) {
-//            Uri.Builder builder = new Uri.Builder();
-//            builder.scheme("https");
-//            builtUri.buildUpon().appendQueryParameter();
-//        }
 
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("https")
@@ -218,7 +210,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                             builder.appendQueryParameter("region", regio);
                         }
 
-                        String url = builder.build().toString();
+                        url = builder.build().toString();
         System.out.println(url);
         return url;
     }
