@@ -4,9 +4,6 @@
     <item android:id="@+id/popularity"
         android:title="Popularity"
         app:showAsAction="never"/>
-    <item android:id="@+id/genre"
-        android:title="Genre"
-        app:showAsAction="never"/>
     <item android:id="@+id/rating"
         android:title="Rating"
         app:showAsAction="never"/>
@@ -19,4 +16,29 @@
     <item android:id="@+id/now_playing"
         android:title="Now playing"
         app:showAsAction="never"/>
+    <item android:id="@+id/genres"
+        android:title="Genres"
+        app:showAsAction="never">
+        <menu android:id="@+id/genre_menu">
+
+            <item android:id="@+id/genre1"
+                android:title="actie"
+                app:showAsAction="never"/>
+            <item android:id="@+id/genre2"
+                android:title="Avontuur"
+                app:showAsAction="never"/>
+            <item android:id="@+id/genre3"
+                android:title="Western"
+                app:showAsAction="never"/>
+            <item android:id="@+id/genre4"
+                android:title="Oorlog"
+                app:showAsAction="never"/>
+            <item android:id="@+id/genre5"
+                android:title="Romantiek"
+                app:showAsAction="never"/>
+            <item android:id="@+id/genre6"
+                android:title="Banaan"
+                app:showAsAction="never"/>
+        </menu>
+    </item>
 </menu>

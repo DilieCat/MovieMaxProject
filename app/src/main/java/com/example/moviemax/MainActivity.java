@@ -3,7 +3,6 @@ package com.example.moviemax;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.view.menu.ShowableListMenu;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -11,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,8 +23,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -34,9 +32,14 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     private RequestQueue requestQueue;
     private String url = "";
 
-    //Variables used for the URL builder.
-
+    private int searchType = 2;
+    private int filter = 0;
+    private int language = 0;
     private int pageNumber = 1;
+    private int region = 1;
+    private int genre_id = 0;
+
+    //Variables used for the URL builder.
 
     private Button middleBtn;
 
@@ -60,12 +63,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         leftPageBtn.setOnClickListener(this);
         rightPageBtn.setOnClickListener(this);
 
-        parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
-                apiLinks.FILTER[3],
-                apiLinks.LANGUAGE_TYPE[0],
-                pageNumber,
-                apiLinks.REGIO[0]);
-        //show
+        parseJSON();
     }
 
     @Override
@@ -78,65 +76,41 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.rating:
-                parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
-                        apiLinks.FILTER[1],
-                        apiLinks.LANGUAGE_TYPE[0],
-                        pageNumber,
-                        apiLinks.REGIO[0]);
-                System.out.println(url);
-                break;
             case R.id.popularity:
-                parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
-                        apiLinks.FILTER[0],
-                        apiLinks.LANGUAGE_TYPE[0],
-                        pageNumber,
-                        apiLinks.REGIO[0]);
+                filter = 0;
                 break;
-            case R.id.genre:
-                parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
-                        apiLinks.FILTER[2],
-                        apiLinks.LANGUAGE_TYPE[0],
-                        pageNumber,
-                        apiLinks.REGIO[0]);
+            case R.id.rating:
+                filter = 1;
                 break;
             case R.id.latest:
-                parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
-                        apiLinks.FILTER[3],
-                        apiLinks.LANGUAGE_TYPE[0],
-                        pageNumber,
-                        apiLinks.REGIO[0]);
+                filter = 2;
                 break;
             case R.id.upcoming:
-                parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
-                        apiLinks.FILTER[3],
-                        apiLinks.LANGUAGE_TYPE[0],
-                        pageNumber,
-                        apiLinks.REGIO[0]);
-                System.out.println();
+                filter = 3;
                 break;
             case R.id.now_playing:
-                parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
-                        apiLinks.FILTER[4],
-                        apiLinks.LANGUAGE_TYPE[0],
-                        pageNumber,
-                        apiLinks.REGIO[0]);
+                filter = 4;
+                break;
+            case R.id.genres:
+                break;
         }
         showArrayList = new ArrayList<>();
         requestQueue = Volley.newRequestQueue(this);
+        parseJSON();
+        Toast.makeText(this, "filtered by " + apiLinks.FILTER[filter], Toast.LENGTH_SHORT).show();
 
         return true;
 
         // return super.onOptionsItemSelected(item);
     }
 
-    private void parseJSON(String searchType, String filter, String language, int pageNumber, String regio){
+    private void parseJSON(){
         if (showArrayList.size() > 0) {
             showArrayList.clear();
         }
 
 
-        String url = buildUrl(searchType, filter, language, pageNumber, regio);
+        String url = buildUrl();
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -159,8 +133,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                                 for( int j = 0; j < arrGenres.length(); j++) {
                                     genres.add(Genres.getList().get(arrGenres.get(j)));
                                 }
-
-
+                                
                                 showArrayList.add(new Show(id, title, genres, language, showImage, overview));
 
                             }
@@ -184,7 +157,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     }
 
     //URL BUILDER
-    public String buildUrl(String searchType, String filter, String language, int pageNumber, String regio) {
+    public String buildUrl() {
 
 
         Uri.Builder builder = new Uri.Builder();
@@ -192,22 +165,26 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 .authority(apiLinks.MDB_BASE_URL)
                 .appendPath("3");
 
-        if(!searchType.equals("")){
-           builder.appendPath(searchType);
+        if(searchType != (apiLinks.SEARCH_TYPE.length - 1)){
+           builder.appendPath(apiLinks.SEARCH_TYPE[searchType]);
         }
 
         builder.appendPath("movie");
-                if(!filter.equals("")){
-                    builder.appendPath(filter);
+                if(filter != (apiLinks.FILTER.length - 1)){
+                    builder.appendPath(apiLinks.FILTER[filter]);
                 }
 
                 builder.appendQueryParameter("api_key", apiLinks.APIKEY)
-                        .appendQueryParameter("language", language);
+                        .appendQueryParameter("language", apiLinks.LANGUAGE_TYPE[language]);
+
+                        if(genre_id != 0){
+                            builder.appendQueryParameter("with_genres", Integer.toString(genre_id));
+                        }
                         if(pageNumber != 0){
                             builder.appendQueryParameter("page", Integer.toString(pageNumber));
                         }
-                        if(!regio.equals("")){
-                            builder.appendQueryParameter("region", regio);
+                        if(region != (apiLinks.REGION.length - 1)){
+                            builder.appendQueryParameter("region", apiLinks.REGION[region]);
                         }
 
                         url = builder.build().toString();
@@ -220,24 +197,15 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         switch (v.getId()){
             case R.id.rightPageBtn:
                 pageNumber++;
-                parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
-                        apiLinks.FILTER[apiLinks.FILTER.length -1],
-                        apiLinks.LANGUAGE_TYPE[0],
-                        pageNumber,
-                        apiLinks.REGIO[0]);
                 break;
 
             case R.id.leftPageBtn:
                 if (pageNumber > 1) {
                     pageNumber--;
-                    parseJSON(apiLinks.SEARCH_TYPE[apiLinks.SEARCH_TYPE.length - 1],
-                            apiLinks.FILTER[apiLinks.FILTER.length -1],
-                            apiLinks.LANGUAGE_TYPE[0],
-                            pageNumber,
-                            apiLinks.REGIO[0]);
                     break;
                 }
         }
+        parseJSON();
         middleBtn.setText(Integer.toString(pageNumber));
     }
 
