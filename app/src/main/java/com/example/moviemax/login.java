@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import static com.example.moviemax.MainActivity.loggedIn;
 import static com.example.moviemax.MainActivity.loginEmail;
+import static com.example.moviemax.MainActivity.loginId;
 import static com.example.moviemax.MainActivity.loginPassword;
 
 public class login extends AppCompatActivity {
@@ -33,17 +34,18 @@ public class login extends AppCompatActivity {
 
 
     }
-
     public void onClickLogin(View v){
-       if (mDatabaseHelper.checkIfLoggedIn(email.getText().toString(), password.getText().toString())) {
+        if (mDatabaseHelper.checkIfLoggedIn(email.getText().toString(), password.getText().toString())) {
             Toast.makeText(this, "Logged in!", Toast.LENGTH_SHORT).show();
             loginEmail = email.getText().toString();
             loginPassword = password.getText().toString();
             loggedIn = true;
+            loginId = mDatabaseHelper.getUserId();
             finish();
         } else {
             Toast.makeText(this, "Wrong credentials", Toast.LENGTH_LONG).show();
         }
     }
+
 
 }

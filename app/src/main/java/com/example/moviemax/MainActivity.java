@@ -65,6 +65,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
     public static String loginEmail;
     public static String loginPassword;
+    public static String loginId;
 
     //false is not logged in, true is logged in
     public static boolean loggedIn;
@@ -103,6 +104,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         Button startPageBtn = findViewById(R.id.startPageBtn);
         testButton = findViewById(R.id.testButton);
         loginBtn = findViewById(R.id.loginBtn);
+        Button listBtn = findViewById(R.id.listBtn);
 
         middleBtn.setText(Integer.toString(pageNumber));
         startPageBtn.setText("1");
@@ -112,6 +114,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         startPageBtn.setOnClickListener(this);
         testButton.setOnClickListener(this);
         loginBtn.setOnClickListener(this);
+        listBtn.setOnClickListener(this);
 
         parseJSON();
         loggedIn = false;
@@ -343,7 +346,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 break;
 
             case R.id.listBtn:
-
+                Intent showList = new Intent(this, showListActivity.class);
+                startActivity(showList);
                 break;
 
         }

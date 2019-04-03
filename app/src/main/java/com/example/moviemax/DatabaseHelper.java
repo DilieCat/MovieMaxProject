@@ -7,6 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+
+import static com.example.moviemax.MainActivity.loginEmail;
+import static com.example.moviemax.MainActivity.loginId;
+import static com.example.moviemax.MainActivity.loginPassword;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseHelper";
@@ -17,19 +23,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String TABLE_ShowList = "ShowList";
     private static final String TABLE_User = "User";
 
-    private static final String KEY_ID = "ID";
-
-    private static final String ShowInList_COL1 = "showID";
-    private static final String ShowInList_COL2 = "showListID";
-
-    private static final String ShowList_COL1 = "showListID";
-    private static final String ShowList_COL2 = "name";
-
-    private static final String User_COL1 = "userId";
-    private static final String Usert_COL2 = "firstName";
-
-    private static final String CREATE_TABLE_ShowInList = "CREATE TABLE "+ TABLE_ShowInList + "(" + KEY_ID +"ID INTEGER PRIMARY KEY AUTOINCREMENT,"+ ShowInList_COL1 + "INTEGER,"+ ShowInList_COL2 +" INTEGER)";
-    private static final String CREATE_TABLE_ShowList = "CREATE TABLE "+ TABLE_ShowList + "(" + ShowList_COL1 + "ID INTEGER PRIMARY KEY," + ShowList_COL2 +" TEXT)";
+    private static final String CREATE_TABLE_ShowInList = "CREATE TABLE ShowInList(ID INTEGER primary key autoincrement, showId INTEGER , showListId INTEGER)";
+    private static final String CREATE_TABLE_ShowList = "CREATE TABLE ShowList(showListId INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, userId TEXT)";
     private static final String CREATE_TABLE_User = "CREATE TABLE User (ID INTEGER primary key autoincrement, firstName TEXT, lastName TEXT, age INTEGER, email TEXT, password TEXT)";
 
 
@@ -40,49 +35,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_TABLE_User);
-       // db.execSQL(CREATE_TABLE_ShowInList);
-        //db.execSQL(CREATE_TABLE_ShowList);
+        db.execSQL(CREATE_TABLE_ShowInList);
+        db.execSQL(CREATE_TABLE_ShowList);
 
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //On upgrade drop older tables
-        //db.execSQL("DROP TABLE IF EXISTS "+TABLE_ShowList);
-        //db.execSQL("DROP TABLE IF EXISTS "+TABLE_ShowInList);
+        db.execSQL("DROP TABLE IF EXISTS "+TABLE_ShowList);
+        db.execSQL("DROP TABLE IF EXISTS "+TABLE_ShowInList);
         db.execSQL("DROP TABLE IF EXISTS User");
         //Create new tables
         onCreate(db);
     }
-/*
-    public long createShowList(String ShowListName){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put(ShowList_COL2, ShowListName);
-
-        long ShowList_id = db.insert(TABLE_ShowList, null, contentValues);
-
-        Log.d(TAG, "createShowList: Adding" + ShowListName + " to "+ TABLE_ShowList);
-
-        return ShowList_id;
-    }
-
-
-    public long addShow(int ShowList_id, Show film){
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-
-        contentValues.put(ShowInList_COL1, film.getId());
-        contentValues.put(ShowInList_COL2, ShowList_id);
-
-        long ShowInList_id = db.insert(TABLE_ShowInList,null, contentValues);
-
-        Log.d(TAG, "addShow: Adding" + film + " to "+ TABLE_ShowInList);
-
-        return ShowInList_id;
-    }
-    */
 
     //Registeren van user
     public boolean insertUser(String name, String lastName, int age, String email, String password){
@@ -108,6 +74,61 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         } else {
             return false;
         }
+    }
+
+    public String getUserId(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("select ID from User where email = '" + loginEmail + "' and password = '" + loginPassword + "'", null );
+        res.moveToFirst();
+        return res.getString(res.getColumnIndex("ID"));
+    }
+
+    public boolean createShowList(String userId, String name){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", name);
+        contentValues.put("userId", userId);
+        db.insert("ShowList", null, contentValues);
+        return true;
+    }
+
+    public ArrayList<ShowList> getShowListUser(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        ArrayList<ShowList> tempAL = new ArrayList<>();
+        ShowList showList;
+
+        Cursor res =  db.rawQuery("select * from ShowList where userId = '" + loginId + "'", null );
+        String showId = "";
+
+        if (res.moveToFirst()) {
+            while (!res.isAfterLast()) {
+                showId = res.getString(res.getColumnIndex("showListId"));
+                showList = new ShowList(res.getString(res.getColumnIndex("name")));
+                Cursor showinList =  db.rawQuery("select * from ShowInList where showListId = '" + showId + "'", null );
+                if (showinList.moveToFirst()) {
+                    while (!showinList.isAfterLast()) {
+
+                        showList.setShowNumber(showinList.getInt(showinList.getColumnIndex("showId")));
+                        showinList.moveToNext();
+                    }
+                }
+
+                showinList.close();
+                tempAL.add(showList);
+                res.moveToNext();
+            }
+        }
+
+        return tempAL;
+    }
+
+    public boolean checkIfUserHasList(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("select * from ShowList where userId = '" + loginId + "'", null );
+        if (res.getCount() > 0) {
+            return false;
+        }
+        return true;
     }
 
 

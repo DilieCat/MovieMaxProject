@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
-    
 
     <application
         android:allowBackup="true"
@@ -18,7 +17,7 @@
         <activity
             android:name=".showListActivity"
             android:label="@string/title_activity_show_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".login"
             android:label="@string/title_activity_login"
@@ -26,9 +25,8 @@
         <activity
             android:name=".Signup"
             android:label="@string/title_activity_signup"
-            android:theme="@style/AppTheme.NoActionBar"
-            />
-        <activity android:name=".DetailActivity"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".DetailActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
