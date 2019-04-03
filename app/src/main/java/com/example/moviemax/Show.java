@@ -10,6 +10,8 @@ public class Show implements Serializable {
     private String language;
     private String posterPath;
     private String overview;
+    private String trailerLink;
+    //private Genres genres = new Genres();
 
     public Show(int id, String title, ArrayList<String> genre, String language, String posterPath, String overview) {
         this.id = id;
@@ -18,6 +20,21 @@ public class Show implements Serializable {
         this.language = language;
         this.posterPath = posterPath;
         this.overview = overview;
+    }
+
+    public String getGenreToString(){
+        String genres = "";
+
+        for (int i = 0; i < genre.size(); i++) {
+            if(i == genre.size() -1){
+                genres += genre.get(i);
+            }else {
+                genres += genre.get(i) + ", ";
+            }
+
+        }
+
+        return genres;
     }
 
 
@@ -67,6 +84,14 @@ public class Show implements Serializable {
 
     public void setOverview(String overview) {
         this.overview = overview;
+    }
+
+    public String getTrailerLink() {
+        return trailerLink;
+    }
+
+    public void setTrailerLink(String trailerLink) {
+        this.trailerLink = trailerLink;
     }
 
     @Override
