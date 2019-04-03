@@ -1,6 +1,7 @@
 package com.example.moviemax;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,9 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 
 import org.w3c.dom.Text;
 
@@ -20,17 +23,6 @@ import java.util.ArrayList;
 public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ShowViewHolder> {
     private Context context;
     private ArrayList<Show> showList;
-    private OnItemClickListener onItemClickListener;
-
-    public interface OnItemClickListener{
-
-        void onItemClick(int position);
-
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-    }
 
     public ShowAdapter(Context context, ArrayList<Show> showList){
         this.context = context;
@@ -41,8 +33,23 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ShowViewHolder
     @NonNull
     @Override
     public ShowViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
         View v = LayoutInflater.from(context).inflate(R.layout.show_item, parent, false);
-        return new ShowViewHolder(v);
+
+        final ShowViewHolder showViewHolder = new ShowViewHolder(v);
+        showViewHolder.viewContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, DetailActivity.class);
+
+                Show show = showList.get(showViewHolder.getAdapterPosition());
+                String imgJson = new Gson().toJson(show);
+                intent.putExtra("Show", imgJson);
+
+                context.startActivity(intent);
+            }
+        });
+        return showViewHolder;
     }
 
     @Override
@@ -52,9 +59,7 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ShowViewHolder
        //String showType = show.getType();
        String showName = show.getTitle();
        String showGenre = show.getGenreToString();
-       String showImageUrl = show.getPosterpath();
-
-
+       String showImageUrl = show.getPosterPath();
 
 
        showViewHolder.titleView.setText("Title: \n" + showName);
@@ -72,18 +77,20 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ShowViewHolder
     }
 
     public class ShowViewHolder extends RecyclerView.ViewHolder{
-        public ImageView showView;
-        public TextView genreView;
-        public TextView titleView;
-        public TextView descriptionView;
-        public TextView trailerView;
-        public Button addButton;
-        public Button shareButton;
-
+        RelativeLayout viewContainer;
+        ImageView showView;
+        TextView genreView;
+        TextView titleView;
+        TextView descriptionView;
+        TextView trailerView;
+        Button addButton;
+        Button shareButton;
 
 
         public ShowViewHolder(View itemView) {
             super(itemView);
+
+            viewContainer = itemView.findViewById(R.id.item_container);
             showView = itemView.findViewById(R.id.image_view);
             descriptionView = itemView.findViewById(R.id.text_view_detail_description);
             genreView = itemView.findViewById(R.id.text_view_genre);
@@ -91,19 +98,6 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ShowViewHolder
             trailerView = itemView.findViewById(R.id.image_view_detail_trailerLink);
             addButton = itemView.findViewById(R.id.image_view_detail_add_button);
             shareButton = itemView.findViewById(R.id.image_view_detail_share_button);
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(onItemClickListener != null){
-                        int position = getAdapterPosition();
-                        if(position != RecyclerView.NO_POSITION){
-                            onItemClickListener.onItemClick(position);
-                        }
-                    }
-                }
-            });
-
         }
     }
 }

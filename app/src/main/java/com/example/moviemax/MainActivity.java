@@ -88,8 +88,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         mDatabaseHelper = new DatabaseHelper(this);
 
         recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setHasFixedSize(true);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         showArrayList = new ArrayList<>();
         requestQueue = Volley.newRequestQueue(this);
@@ -182,7 +180,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         // return super.onOptionsItemSelected(item);
     }
 
-    private void parseJSON(){
+    private void parseJSON() {
         if (showArrayList.size() > 0) {
             showArrayList.clear();
         }
@@ -205,7 +203,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                             totalPagesBtn.setText(Integer.toString(totalPages));
 
                             //Start a for loop for the items in the array.
-                            for(int i = 0; i < jsonArray.length(); i++){
+                            for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject hit = jsonArray.getJSONObject(i);
 
                                 //get all item data
@@ -214,31 +212,27 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                                 String language = hit.getString("original_language");
                                 String showImage = "https://image.tmdb.org/t/p/w500" + hit.getString("poster_path");
                                 String overview = hit.getString("overview");
+                                String releaseDate = hit.getString("release_date");
+                                String rating = hit.getString("vote_average");
+                                String voteCount = hit.getString("vote_count");
+                                String backDrop = "https://image.tmdb.org/t/p/w500" + hit.getString("backdrop_path");
 
                                 //Put all genres in a list.
                                 ArrayList<String> genres = new ArrayList<String>();
                                 JSONArray arrGenres = hit.getJSONArray("genre_ids");
-                                for( int j = 0; j < arrGenres.length(); j++) {
+                                for (int j = 0; j < arrGenres.length(); j++) {
                                     genres.add(Genres.getList().get(arrGenres.get(j)));
                                 }
 
                                 //Make new show items.
-                                showArrayList.add(new Show(id, title, genres, language, showImage, overview));
+                                showArrayList.add(new Show(id, title, genres, language, showImage, overview, releaseDate, rating, voteCount, backDrop));
                             }
-
-                            //Connect adapters to data
-                            showAdapter = new ShowAdapter(MainActivity.this, showArrayList);
-                            recyclerView.setAdapter(showAdapter);
-
-
-                            //This makes sure the adapters knows there is going to be a list change.
-                            showAdapter.notifyDataSetChanged();
-                            showAdapter.setOnItemClickListener(MainActivity.this);
-
 
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        setupRecyclerView(showArrayList);
+                        showAdapter.notifyDataSetChanged();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -250,6 +244,14 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         //Add a request to the queue.
         requestQueue.add(jsonObjectRequest);
 
+    }
+
+    private void setupRecyclerView(ArrayList<Show> showArrayList) {
+         showAdapter = new ShowAdapter(this, showArrayList);
+         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+         recyclerView.setHasFixedSize(true);
+         recyclerView.setAdapter(showAdapter);
     }
 
 
@@ -345,17 +347,17 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         middleBtn.setText(Integer.toString(pageNumber));
     }
 
-    @Override
-    public void onItemClick(int position) {
-        Intent detailIntent = new Intent(this, DetailActivity.class);
-        Show clickedShow = showArrayList.get(position);
-
-        detailIntent.putExtra(EXTRA_POSTERPATH, clickedShow.getPosterpath());
-        detailIntent.putExtra(EXTRA_TITLE, clickedShow.getTitle());
-        detailIntent.putExtra(EXTRA_DESCRIPTION, clickedShow.getOverview());
-        detailIntent.putExtra(EXTRA_TRAILER, clickedShow.getTrailerLink());
-        detailIntent.putExtra(EXTRA_GENRE, clickedShow.getGenreToString());
-
-        startActivity(detailIntent );
-    }
+//    @Override
+//    public void onItemClick(int position) {
+//        Intent detailIntent = new Intent(this, DetailActivity.class);
+//        Show clickedShow = showArrayList.get(position);
+//
+//        detailIntent.putExtra(EXTRA_POSTERPATH, clickedShow.getPosterpath());
+//        detailIntent.putExtra(EXTRA_TITLE, clickedShow.getTitle());
+//        detailIntent.putExtra(EXTRA_DESCRIPTION, clickedShow.getOverview());
+//        detailIntent.putExtra(EXTRA_TRAILER, clickedShow.getTrailerLink());
+//        detailIntent.putExtra(EXTRA_GENRE, clickedShow.getGenreToString());
+//
+//        startActivity(detailIntent );
+//    }
 }
