@@ -37,6 +37,7 @@ public class Show implements Serializable {
         return genres;
     }
 
+
     public int getId() {
         return id;
     }
