@@ -307,12 +307,12 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.totalPagesBtn:
                 pageNumber = totalPages;
-                parseJSON(pageNumber);
+                parseJSON();
                 break;
 
             case R.id.startPageBtn:
                 pageNumber = 1;
-                parseJSON(pageNumber);
+                parseJSON();
                 break;
 
             case R.id.testButton:
