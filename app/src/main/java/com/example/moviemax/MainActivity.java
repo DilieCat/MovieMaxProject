@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.menu.ShowableListMenu;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -29,7 +30,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class  MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class  MainActivity extends AppCompatActivity implements View.OnClickListener, ShowAdapter.OnItemClickListener{
     private RecyclerView recyclerView;
 
     private ShowAdapter showAdapter;
@@ -38,6 +39,20 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     private String url = "";
 
     private Context context = this;
+    //Variables used for the onItemClick method.
+    public static final String EXTRA_POSTERPATH = "posterPath";
+    public static final String EXTRA_TITLE = "title";
+    public static final String EXTRA_DESCRIPTION = "description";
+    public static final String EXTRA_TRAILER = "trailerlink";
+    public static final String EXTRA_GENRE = "genre";
+
+    //Variables used for the URL builder.
+    private final String ROVER_BASE_URL = "https://api.themoviedb.org/3/movie/popular";
+    private final static String PARAM_PAGE = "page";
+    private final static String LANGUAGE = "language";
+    private final static String LANGUAGE_TYPE = "en-US";
+    private final static String PARAM_API = "api_key";
+    private final static String PARAM_APIKEY = "ee960f573833509472cb7ab57f055c12";
 
     private int searchType = 2;
     private int filter = 0;
@@ -214,7 +229,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
                                 //Make new show items.
                                 showArrayList.add(new Show(id, title, genres, language, showImage, overview));
-
                             }
 
                             //Connect adapters to data
@@ -223,6 +237,9 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
                             //This makes sure the adapters knows there is going to be a list change.
                             showAdapter.notifyDataSetChanged();
+                            showAdapter.setOnItemClickListener(MainActivity.this);
+
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -332,5 +349,19 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         }
         parseJSON();
         middleBtn.setText(Integer.toString(pageNumber));
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Intent detailIntent = new Intent(this, DetailActivity.class);
+        Show clickedShow = showArrayList.get(position);
+
+        detailIntent.putExtra(EXTRA_POSTERPATH, clickedShow.getPosterpath());
+        detailIntent.putExtra(EXTRA_TITLE, clickedShow.getTitle());
+        detailIntent.putExtra(EXTRA_DESCRIPTION, clickedShow.getOverview());
+        detailIntent.putExtra(EXTRA_TRAILER, clickedShow.getTrailerLink());
+        detailIntent.putExtra(EXTRA_GENRE, clickedShow.getGenreToString());
+
+        startActivity(detailIntent );
     }
 }
