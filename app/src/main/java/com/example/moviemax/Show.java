@@ -10,16 +10,23 @@ public class Show implements Serializable {
     private String language;
     private String posterPath;
     private String overview;
-    private String trailerLink;
+    private String releaseDate;
+    private String rating;
+    private String voteCount;
+    private String backDrop;
     //private Genres genres = new Genres();
 
-    public Show(int id, String title, ArrayList<String> genre, String language, String posterPath, String overview) {
+    public Show(int id, String title, ArrayList<String> genre, String language, String posterPath, String overview, String releaseDate, String rating, String voteCount, String backDrop) {
         this.id = id;
         this.title = title;
         this.genre = genre;
         this.language = language;
         this.posterPath = posterPath;
         this.overview = overview;
+        this.releaseDate = releaseDate;
+        this.rating = rating;
+        this.voteCount = voteCount;
+        this.backDrop = backDrop;
     }
 
     public String getGenreToString(){
@@ -50,48 +57,36 @@ public class Show implements Serializable {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public ArrayList<String> getGenre() {
         return genre;
-    }
-
-    public void setGenre(ArrayList<String> genre) {
-        this.genre = genre;
     }
 
     public String getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
-        language = language;
-    }
-
-    public String getPosterpath() {
+    public String getPosterPath() {
         return posterPath;
-    }
-
-    public void setPosterpath(String posterPath) {
-        this.posterPath = posterPath;
     }
 
     public String getOverview() {
         return overview;
     }
 
-    public void setOverview(String overview) {
-        this.overview = overview;
+    public String getReleaseDate() {
+        return releaseDate;
     }
 
-    public String getTrailerLink() {
-        return trailerLink;
+    public String getRating() {
+        return rating;
     }
 
-    public void setTrailerLink(String trailerLink) {
-        this.trailerLink = trailerLink;
+    public String getVoteCount() {
+        return voteCount;
+    }
+
+    public String getBackDrop() {
+        return backDrop;
     }
 
     @Override
@@ -99,7 +94,8 @@ public class Show implements Serializable {
         return  "Title: " + title + '\n' +
                 "Genre: " + genre.toString() +
                 "Language: " + language + '\n' +
-                "Overview: " + overview + '\n';
+                "Overview: " + overview + '\n' +
+                "Release date: " + releaseDate;
     }
 }
 

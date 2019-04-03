@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 
 import static com.example.moviemax.MainActivity.EXTRA_DESCRIPTION;
 import static com.example.moviemax.MainActivity.EXTRA_GENRE;
@@ -17,31 +18,36 @@ import static com.example.moviemax.MainActivity.EXTRA_TITLE;
 
 public class DetailActivity extends AppCompatActivity {
 
+    private TextView titleView;
+    private TextView descriptionView;
+    private TextView genresView;
+    private TextView ratingView;
+    private TextView releaseDateView;
+    private ImageView posterView;
+    private Intent intent;
+    private Show show;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Intent intent = getIntent();
-        String posterPath = intent.getStringExtra(EXTRA_POSTERPATH);
-        String title = intent.getStringExtra(EXTRA_TITLE);
-        String overview = intent.getStringExtra(EXTRA_DESCRIPTION);
-        String genre = intent.getStringExtra(EXTRA_GENRE);
+        intent = getIntent();
+        String showJson = intent.getStringExtra("Show");
+        show = new Gson().fromJson(showJson, Show.class);
 
-        ImageView imageView = findViewById(R.id.image_view_detail);
-        TextView titleView = findViewById(R.id.text_view_detail_title);
-        TextView descriptionView = findViewById(R.id.text_view_detail_description);
-        TextView genreView = findViewById(R.id.text_view_detail_genre);
+        posterView = findViewById(R.id.image_view_detail);
+        titleView = findViewById(R.id.text_view_detail_title);
+        genresView = findViewById(R.id.text_view_detail_genre);
+        descriptionView = findViewById(R.id.text_view_detail_description);
+        ratingView = findViewById(R.id.text_view_detail_rating);
+        releaseDateView = findViewById(R.id.text_view_detail_release_date);
 
-
-
-        Glide.with(this).load(posterPath).centerCrop().into(imageView);
-        titleView.setText(title);
-        descriptionView.setText("Description: \n" + overview);
-        genreView.setText("Genres: \n" + genre);
-
-
-
-
+        Glide.with(this).load(show.getBackDrop()).centerCrop().into(posterView);
+        titleView.setText(show.getTitle());
+        descriptionView.setText("Description: \n" + show.getOverview());
+        genresView.setText("Genres: \n" + show.getGenreToString());
+        ratingView.setText("Rating: " + show.getRating() + " (" + show.getVoteCount() + ")");
+        releaseDateView.setText("Release date: " + show.getReleaseDate());
     }
 }
