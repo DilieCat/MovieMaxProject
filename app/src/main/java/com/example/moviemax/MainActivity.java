@@ -1,5 +1,6 @@
 package com.example.moviemax;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,11 +23,18 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class  MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class  MainActivity extends AppCompatActivity implements View.OnClickListener, ShowAdapter.OnItemClickListener {
     private RecyclerView recyclerView;
     private ShowAdapter showAdapter;
     private ArrayList<Show> showArrayList;
     private RequestQueue requestQueue;
+
+    //Variables used for the onItemClick method.
+    public static final String EXTRA_POSTERPATH = "posterPath";
+    public static final String EXTRA_TITLE = "title";
+    public static final String EXTRA_DESCRIPTION = "description";
+    public static final String EXTRA_TRAILER = "trailerlink";
+    public static final String EXTRA_GENRE = "genre";
 
     //Variables used for the URL builder.
     private final String ROVER_BASE_URL = "https://api.themoviedb.org/3/movie/popular";
@@ -79,6 +87,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                         try {
                             JSONArray jsonArray = response.getJSONArray("results");
 
+
                             for(int i = 0; i < jsonArray.length(); i++){
                                 JSONObject hit = jsonArray.getJSONObject(i);
 
@@ -88,6 +97,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                                 String showImage = "https://image.tmdb.org/t/p/w500" + hit.getString("poster_path");
                                 String overview = hit.getString("overview");
 
+
                                 ArrayList<String> genres = new ArrayList<String>();
                                 JSONArray arrGenres = hit.getJSONArray("genre_ids");
                                 for( int j = 0; j < arrGenres.length(); j++) {
@@ -95,13 +105,16 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                                 }
 
 
-                                showArrayList.add(new Show(id, title, genres, language, showImage, overview));
 
+                                showArrayList.add(new Show(id, title, genres, language, showImage, overview));
                             }
 
                             showAdapter = new ShowAdapter(MainActivity.this, showArrayList);
                             recyclerView.setAdapter(showAdapter);
                             showAdapter.notifyDataSetChanged();
+                            showAdapter.setOnItemClickListener(MainActivity.this);
+
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -145,4 +158,17 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         middleBtn.setText(Integer.toString(pageNumber));
     }
 
+    @Override
+    public void onItemClick(int position) {
+        Intent detailIntent = new Intent(this, DetailActivity.class);
+        Show clickedShow = showArrayList.get(position);
+
+        detailIntent.putExtra(EXTRA_POSTERPATH, clickedShow.getPosterpath());
+        detailIntent.putExtra(EXTRA_TITLE, clickedShow.getTitle());
+        detailIntent.putExtra(EXTRA_DESCRIPTION, clickedShow.getOverview());
+        detailIntent.putExtra(EXTRA_TRAILER, clickedShow.getTrailerLink());
+        detailIntent.putExtra(EXTRA_GENRE, clickedShow.getGenreToString());
+
+        startActivity(detailIntent );
+    }
 }
