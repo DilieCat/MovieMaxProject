@@ -30,7 +30,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class  MainActivity extends AppCompatActivity implements View.OnClickListener, ShowAdapter.OnItemClickListener{
+public class  MainActivity extends AppCompatActivity implements View.OnClickListener{
     private RecyclerView recyclerView;
 
     private ShowAdapter showAdapter;
