@@ -39,13 +39,13 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
     private Context context = this;
 
-    private int searchType = 2;
+    private int searchType = apiLinks.SEARCH_TYPE.length - 1;
     private int filter = 0;
     private int language = 0;
     private int pageNumber = 1;
     private int region = 1;
     private int genre_id = 0;
-    private String searchtext = "";
+    private String searchText = "";
     private int totalPages = 0;
 
     public static String loginEmail;
@@ -114,7 +114,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 new SearchView.OnQueryTextListener() {
                     @Override
                     public boolean onQueryTextSubmit(String newText) {
-                        searchtext = newText;
+                        searchText = newText;
                         searchType = 0;
                         filter = 5;
                         showArrayList = new ArrayList<>();
@@ -123,7 +123,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                         Toast.makeText(context, "searched for " + newText, Toast.LENGTH_SHORT).show();
                         System.out.println(url);
 
-                        searchtext = "";
+                        searchText = "";
                         searchType = 2;
                         filter = 0;
 
@@ -149,14 +149,11 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             case R.id.rating:
                 filter = 1;
                 break;
-            case R.id.latest:
+            case R.id.upcoming:
                 filter = 2;
                 break;
-            case R.id.upcoming:
-                filter = 3;
-                break;
             case R.id.now_playing:
-                filter = 4;
+                filter = 3;
                 break;
             case R.id.genres:
                 break;
@@ -221,6 +218,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                             showAdapter = new ShowAdapter(MainActivity.this, showArrayList);
                             recyclerView.setAdapter(showAdapter);
 
+
                             //This makes sure the adapters knows there is going to be a list change.
                             showAdapter.notifyDataSetChanged();
                         } catch (JSONException e) {
@@ -267,8 +265,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                         if(pageNumber != 0){
                             builder.appendQueryParameter("page", Integer.toString(pageNumber));
                         }
-                        if(!searchtext.equals("")){
-                            builder.appendQueryParameter("query", searchtext);
+                        if(!searchText.equals("")){
+                            builder.appendQueryParameter("query", searchText);
                         }
                         if(region != (apiLinks.REGION.length - 1)){
                             builder.appendQueryParameter("region", apiLinks.REGION[region]);
@@ -307,12 +305,12 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
             case R.id.totalPagesBtn:
                 pageNumber = totalPages;
-                parseJSON(pageNumber);
+                parseJSON();
                 break;
 
             case R.id.startPageBtn:
                 pageNumber = 1;
-                parseJSON(pageNumber);
+                parseJSON();
                 break;
 
             case R.id.testButton:
