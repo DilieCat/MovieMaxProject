@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener{
     private RecyclerView recyclerView;
+
     private ShowAdapter showAdapter;
     private ArrayList<Show> showArrayList;
     private RequestQueue requestQueue;
@@ -40,11 +42,19 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     private int pageNumber = 1;
     private int totalPages = 0;
 
+    public static String loginEmail;
+    public static String loginPassword;
+
+    //false is not logged in, true is logged in
+    public static boolean loggedIn;
+
     //private int numberOfRequestsToMake = 0;
     //private boolean hasRequestFailed = false;
 
     private Button middleBtn;
     private Button totalPagesBtn;
+    private Button loginBtn;
+    private Button testButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +73,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         middleBtn = findViewById(R.id.middleBtn);
         totalPagesBtn = findViewById(R.id.totalPagesBtn);
         Button startPageBtn = findViewById(R.id.startPageBtn);
-        Button testButton = findViewById(R.id.testButton);
+        testButton = findViewById(R.id.testButton);
+        loginBtn = findViewById(R.id.loginBtn);
 
         middleBtn.setText(Integer.toString(pageNumber));
         startPageBtn.setText("1");
@@ -72,8 +83,11 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         totalPagesBtn.setOnClickListener(this);
         startPageBtn.setOnClickListener(this);
         testButton.setOnClickListener(this);
+        loginBtn.setOnClickListener(this);
 
         parseJSON(pageNumber);
+
+        loggedIn = false;
     }
 
     private void parseJSON(int pageNumber){
@@ -154,6 +168,19 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         return builtUri.toString();
     }
 
+    //Method that activates when activity gets restarted
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (loggedIn) {
+            loginBtn.setVisibility(View.GONE);
+            testButton.setVisibility(View.GONE);
+            Toast.makeText(this, "Welcome " + loginEmail, Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    //All click cases
     @Override
     public void onClick(View v) {
         switch (v.getId()){
@@ -182,6 +209,12 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             case R.id.testButton:
                 Intent singUp = new Intent(this, Signup.class);
                 startActivity(singUp);
+                break;
+
+            case R.id.loginBtn:
+                Intent login = new Intent(this, login.class);
+                startActivity(login);
+
                 break;
 
 

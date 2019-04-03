@@ -15,12 +15,12 @@ import org.w3c.dom.Text;
 
 public class Signup extends AppCompatActivity {
 
-    TextView name;
-    TextView lastName;
-    TextView age;
-    TextView email;
-    TextView password;
-    DatabaseHelper mDatabaseHelper;
+    private TextView name;
+    private TextView lastName;
+    private TextView age;
+    private TextView email;
+    private TextView password;
+    private DatabaseHelper mDatabaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +42,16 @@ public class Signup extends AppCompatActivity {
     }
 
     public void onClickSingUp(View v){
-        if (mDatabaseHelper.insertUser(name.getText().toString(), lastName.getText().toString(), Integer.parseInt(age.getText().toString()), email.getText().toString(), password.getText().toString())) {
-            Toast.makeText(this, "Registered!", Toast.LENGTH_LONG).show();
-            finish();
+        if (!(name.getText().toString().matches("")  || lastName.getText().toString().matches("")  || age.getText().toString().matches("")   || email.getText().toString().matches("")   || password.getText().toString().matches("")  )) {
+            if (mDatabaseHelper.insertUser(name.getText().toString(), lastName.getText().toString(), Integer.parseInt(age.getText().toString()), email.getText().toString(), password.getText().toString())) {
+                Toast.makeText(this, "Registered!", Toast.LENGTH_LONG).show();
+                finish();
+            } else {
+                Toast.makeText(this, "You could not be registered", Toast.LENGTH_LONG).show();
+            }
         } else {
-            Toast.makeText(this, "It did not work!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Fill in all credientials", Toast.LENGTH_LONG).show();
+
         }
     }
 

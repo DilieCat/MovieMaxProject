@@ -2,6 +2,7 @@ package com.example.moviemax;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -94,6 +95,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("password", password);
         db.insert("User", null, contentValues);
         return true;
+    }
+
+    //Checken of user gegevens kloppen
+    public boolean checkIfLoggedIn(String email, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res =  db.rawQuery("select ID from User where email = '" + email + "' and password = '" + password + "'", null );
+        if (res.getCount() > 0) {
+
+            Log.w("CHECK HIER", "" + res.getColumnCount());
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
