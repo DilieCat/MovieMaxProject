@@ -19,4 +19,6 @@
         completions."
     </string>
     <string name="title_activity_login">login</string>
+    <string name="toevoeg_button">Toevoegen aan lijst</string>
+    <string name="deel_button">Delen</string>
 </resources>

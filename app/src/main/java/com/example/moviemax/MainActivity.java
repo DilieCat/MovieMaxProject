@@ -38,6 +38,19 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     private String url = "";
 
     private Context context = this;
+    //Variables used for the onItemClick method.
+    public static final String EXTRA_POSTERPATH = "posterPath";
+    public static final String EXTRA_TITLE = "title";
+    public static final String EXTRA_DESCRIPTION = "description";
+    public static final String EXTRA_TRAILER = "trailerlink";
+    public static final String EXTRA_GENRE = "genre";
+
+    //Variables used for the URL builder.
+    private final String ROVER_BASE_URL = "https://api.themoviedb.org/3/movie/popular";
+    private final static String PARAM_PAGE = "page";
+    private final static String LANGUAGE = "language";
+    private final static String LANGUAGE_TYPE = "en-US";
+    private final static String PARAM_APIKEY = "ee960f573833509472cb7ab57f055c12";
 
     private int searchType = apiLinks.SEARCH_TYPE.length - 1;
     private int filter = 0;
@@ -211,7 +224,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
                                 //Make new show items.
                                 showArrayList.add(new Show(id, title, genres, language, showImage, overview));
-
                             }
 
                             //Connect adapters to data
@@ -221,6 +233,9 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
                             //This makes sure the adapters knows there is going to be a list change.
                             showAdapter.notifyDataSetChanged();
+                            showAdapter.setOnItemClickListener(MainActivity.this);
+
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -328,5 +343,19 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         }
         parseJSON();
         middleBtn.setText(Integer.toString(pageNumber));
+    }
+
+    @Override
+    public void onItemClick(int position) {
+        Intent detailIntent = new Intent(this, DetailActivity.class);
+        Show clickedShow = showArrayList.get(position);
+
+        detailIntent.putExtra(EXTRA_POSTERPATH, clickedShow.getPosterpath());
+        detailIntent.putExtra(EXTRA_TITLE, clickedShow.getTitle());
+        detailIntent.putExtra(EXTRA_DESCRIPTION, clickedShow.getOverview());
+        detailIntent.putExtra(EXTRA_TRAILER, clickedShow.getTrailerLink());
+        detailIntent.putExtra(EXTRA_GENRE, clickedShow.getGenreToString());
+
+        startActivity(detailIntent );
     }
 }
