@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.view.menu.ShowableListMenu;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -29,7 +30,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class  MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class  MainActivity extends AppCompatActivity implements View.OnClickListener, ShowAdapter.OnItemClickListener{
     private RecyclerView recyclerView;
 
     private ShowAdapter showAdapter;
@@ -50,6 +51,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     private final static String PARAM_PAGE = "page";
     private final static String LANGUAGE = "language";
     private final static String LANGUAGE_TYPE = "en-US";
+    private final static String PARAM_API = "api_key";
     private final static String PARAM_APIKEY = "ee960f573833509472cb7ab57f055c12";
 
     private int searchType = 2;
