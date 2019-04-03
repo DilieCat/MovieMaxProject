@@ -323,9 +323,11 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             case R.id.loginBtn:
                 Intent login = new Intent(this, login.class);
                 startActivity(login);
-
                 break;
 
+            case R.id.listBtn:
+
+                break;
 
         }
         parseJSON();
