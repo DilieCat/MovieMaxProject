@@ -1,10 +1,13 @@
 package com.example.moviemax;
 
+import android.content.Context;
 import android.net.Uri;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,12 +35,15 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     private RequestQueue requestQueue;
     private String url = "";
 
+    private Context context = this;
+
     private int searchType = 2;
     private int filter = 0;
     private int language = 0;
     private int pageNumber = 1;
     private int region = 1;
     private int genre_id = 0;
+    private String searchtext = "";
 
     //Variables used for the URL builder.
 
@@ -70,6 +76,37 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+
+        searchView.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String newText) {
+                        searchtext = newText;
+                        searchType = 0;
+                        filter = 5;
+                        showArrayList = new ArrayList<>();
+                        requestQueue = Volley.newRequestQueue(context);
+                        parseJSON();
+                        Toast.makeText(context, "searched for " + newText, Toast.LENGTH_SHORT).show();
+                        System.out.println(url);
+
+                        searchtext = "";
+                        searchType = 2;
+                        filter = 0;
+
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        return false;
+                    }
+                }
+        );
+
         return true;
     }
 
@@ -93,6 +130,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.genres:
                 break;
+
         }
         showArrayList = new ArrayList<>();
         requestQueue = Volley.newRequestQueue(this);
@@ -133,7 +171,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                                 for( int j = 0; j < arrGenres.length(); j++) {
                                     genres.add(Genres.getList().get(arrGenres.get(j)));
                                 }
-                                
+
+
                                 showArrayList.add(new Show(id, title, genres, language, showImage, overview));
 
                             }
@@ -182,6 +221,9 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                         }
                         if(pageNumber != 0){
                             builder.appendQueryParameter("page", Integer.toString(pageNumber));
+                        }
+                        if(!searchtext.equals("")){
+                            builder.appendQueryParameter("query", searchtext);
                         }
                         if(region != (apiLinks.REGION.length - 1)){
                             builder.appendQueryParameter("region", apiLinks.REGION[region]);

@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">MovieMax</string>
     <string name="left">&#60;</string>
+    <string name="hint_search">Banaan..</string>
+    <string name="search_label">Zoekend..</string>
+    <string name="action_search">Zoeken..</string>
+
 </resources>
