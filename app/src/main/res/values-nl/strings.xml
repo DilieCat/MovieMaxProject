@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MovieMax</string>
+    <string name="title_activity_signup">Inloggen</string>
+    <string name="action_search">Zoeken..</string>
+    <string name="prompt_email">Email</string>
+    <string name="deel_button">Delen</string>
+    <string name="toevoeg_button">Toev. aan lijst</string>
+    <string name="title_activity_login">Login</string>
+    <string name="permission_rationale">Machtigingen benodigd voor E-mail</string>
+    <string name="error_field_required">Dit veld is verplicht</string>
+    <string name="error_incorrect_password">Dit wachtwoord is verkeerd</string>
+    <string name="error_invalid_password">Dit wachtwoord is te kort</string>
+    <string name="error_invalid_email">dit E-mailadress is ongeldig</string>
+    <string name="action_sign_in_short">Log in</string>
+    <string name="action_sign_in">Log in of registreer</string>
+    <string name="prompt_password">Wachtwoord(optioneel)</string>
+    <string name="release_date">"Uitgebracht op: "</string>
+    <string name="popularity">Populariteit</string>
+    <string name="rating">Beoordeling</string>
+    <string name="latest">Laatst uitgebracht</string>
+    <string name="upcoming">Aankomend</string>
+    <string name="now_playing">Nu in de bioscoop</string>
+    <string name="action">Actie</string>
+    <string name="adventure">avontuur</string>
+    <string name="western">Westers</string>
+    <string name="war">Oorlog</string>
+    <string name="romance">Romantiek</string>
+    <string name="animation">Animatie</string>
+    <string name="comedy">Komedie</string>
+    <string name="crime">Misdaad</string>
+    <string name="documentary">Documentaire</string>
+    <string name="drama">Dramatiek</string>
+    <string name="family">Familie</string>
+    <string name="history">Geschiedenis</string>
+    <string name="horror">Horror</string>
+    <string name="music">Muziek</string>
+    <string name="mystery">Mysterie</string>
+    <string name="science_fiction">Sciencefiction</string>
+    <string name="tv_movie">Speelfilm</string>
+    <string name="fantasy">Fantasie</string>
+    <string name="thriller">Thriller</string>
+    <string name="register">Registreer</string>
+    <string name="language">Kies taal</string>
+    <string name="settings">Instellingen</string>
+    <string name="description">Description</string>
+</resources>

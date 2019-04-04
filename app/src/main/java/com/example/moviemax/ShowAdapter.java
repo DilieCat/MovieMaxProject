@@ -62,11 +62,9 @@ public class ShowAdapter extends RecyclerView.Adapter<ShowAdapter.ShowViewHolder
        String showImageUrl = show.getPosterPath();
 
 
-       showViewHolder.titleView.setText("Title: \n" + showName);
+       showViewHolder.titleView.setText(showName);
 
        showViewHolder.genreView.setText("Genre's: \n" + showGenre);
-//       showViewHolder.genreView.setText(showGenre);
-       //showViewHolder.typeView.setText(showType);
 
         Glide.with(context).load(showImageUrl).centerCrop().into(showViewHolder.showView);
     }
