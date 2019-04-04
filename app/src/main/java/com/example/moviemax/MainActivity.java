@@ -1,14 +1,26 @@
 package com.example.moviemax;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -28,8 +40,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
-public class  MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class  MainActivity extends AppCompatActivity implements View.OnClickListener, NavigationView.OnNavigationItemSelectedListener {
     private RecyclerView recyclerView;
 
     private ShowAdapter showAdapter;
@@ -45,21 +58,14 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     public static final String EXTRA_TRAILER = "trailerlink";
     public static final String EXTRA_GENRE = "genre";
 
-    //Variables used for the URL builder.
-    private final String ROVER_BASE_URL = "https://api.themoviedb.org/3/movie/popular";
-    private final static String PARAM_PAGE = "page";
-    private final static String LANGUAGE = "language";
-    private final static String LANGUAGE_TYPE = "en-US";
-    private final static String PARAM_APIKEY = "ee960f573833509472cb7ab57f055c12";
-
     private int searchType = apiLinks.SEARCH_TYPE.length - 1;
-    private int filter = 0;
-    private int language = 0;
-    private int pageNumber = 1;
-    private int region = 1;
-    private int genre_id = 0;
-    private String searchText = "";
-    private int totalPages = 0;
+    private int filter;
+    private int language;
+    private int pageNumber;
+    private int region;
+    private int genre_id;
+    private String searchText;
+    private int totalPages;
 
     public static String loginEmail;
     public static String loginPassword;
@@ -75,6 +81,10 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     private Button loginBtn;
     private Button testButton;
 
+    private DrawerLayout drawer;
+
+    private Locale locale;
+
     //database
     private DatabaseHelper mDatabaseHelper;
     private Button addBtn;
@@ -84,6 +94,17 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        searchType = apiLinks.SEARCH_TYPE.length - 1;
+        filter = 0;
+        language = 1;
+        pageNumber = 1;
+        region = 1;
+        genre_id = 0;
+        searchText = "";
+        totalPages = 0;
+
+        loadLocale();
+
         //database
         mDatabaseHelper = new DatabaseHelper(this);
 
@@ -92,13 +113,23 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         showArrayList = new ArrayList<>();
         requestQueue = Volley.newRequestQueue(this);
 
+        Toolbar toolbar = findViewById(R.id.toolbar_main);
+        setSupportActionBar(toolbar);
+
+
+        drawer = findViewById(R.id.drawer_layout);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
         Button leftPageBtn = findViewById(R.id.leftPageBtn);
         Button rightPageBtn = findViewById(R.id.rightPageBtn);
         middleBtn = findViewById(R.id.middleBtn);
         totalPagesBtn = findViewById(R.id.totalPagesBtn);
         Button startPageBtn = findViewById(R.id.startPageBtn);
-        testButton = findViewById(R.id.testButton);
-        loginBtn = findViewById(R.id.loginBtn);
 
         middleBtn.setText(Integer.toString(pageNumber));
         startPageBtn.setText("1");
@@ -106,11 +137,19 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         rightPageBtn.setOnClickListener(this);
         totalPagesBtn.setOnClickListener(this);
         startPageBtn.setOnClickListener(this);
-        testButton.setOnClickListener(this);
-        loginBtn.setOnClickListener(this);
 
         parseJSON();
         loggedIn = false;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+        else{
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -127,7 +166,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                     public boolean onQueryTextSubmit(String newText) {
                         searchText = newText;
                         searchType = 0;
-                        filter = 5;
+                        filter = apiLinks.FILTER.length - 1;
                         showArrayList = new ArrayList<>();
                         requestQueue = Volley.newRequestQueue(context);
                         parseJSON();
@@ -152,6 +191,73 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+        Intent intent = new Intent();
+        switch (menuItem.getItemId()){
+            case R.id.login:
+                intent = new Intent(this, login.class);
+                this.startActivity(intent);
+                break;
+            case R.id.register:
+                intent = new Intent(this, Signup.class);
+                this.startActivity(intent);
+                break;
+            case R.id.language_switch:
+                showChangeLanguageDialog();
+                break;
+        }
+        return true;
+    }
+
+    private void showChangeLanguageDialog(){
+        final String[] languages = {"English", "Dutch"};
+        AlertDialog.Builder mBuilder = new AlertDialog.Builder(MainActivity.this);
+        mBuilder.setTitle(R.string.language);
+        mBuilder.setSingleChoiceItems(languages, -1, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch(which){
+                    case 0:
+                        setLocale("en");
+                        region = 0;
+                        language = 0;
+                        break;
+                    case 1:
+                        setLocale("nl");
+                        region = 1;
+                        language = 1;
+                        break;
+                }
+                recreate();
+                dialog.dismiss();
+                showArrayList = new ArrayList<>();
+                requestQueue = Volley.newRequestQueue(context);
+                parseJSON();
+                Log.d("poep", url);
+            }
+        });
+        AlertDialog mDialog = mBuilder.create();
+        mDialog.show();
+    }
+
+    private void setLocale(String lang) {
+        locale = new Locale(lang);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+        SharedPreferences.Editor editor = getSharedPreferences("Settings", MODE_PRIVATE).edit();
+        editor.putString("My_Lang", lang);
+        editor.apply();
+    }
+
+    public void loadLocale(){
+        SharedPreferences prefs = getSharedPreferences("Settings", Activity.MODE_PRIVATE);
+        String languagePref = prefs.getString("My_Lang", "");
+        setLocale(languagePref);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.popularity:
@@ -168,12 +274,79 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.genres:
                 break;
-
+            case R.id.action:
+                genre_id = 28;
+                break;
+            case R.id.adventure:
+                genre_id = 12;
+                break;
+            case R.id.animation:
+                genre_id = 16;
+                break;
+            case R.id.comedy:
+                genre_id = 35;
+                break;
+            case R.id.crime:
+                genre_id = 80;
+                break;
+            case R.id.documentary:
+                genre_id = 99;
+                break;
+            case R.id.drama:
+                genre_id = 18;
+                break;
+            case R.id.family:
+                genre_id = 10751;
+                break;
+            case R.id.fantasy:
+                genre_id = 14;
+                break;
+            case R.id.history:
+                genre_id = 36;
+                break;
+            case R.id.horror:
+                genre_id = 27;
+                break;
+            case R.id.music:
+                genre_id = 10402;
+                break;
+            case R.id.mystery:
+                genre_id = 9648;
+                break;
+            case R.id.romance:
+                genre_id = 10749;
+                break;
+            case R.id.science_fiction:
+                genre_id = 878;
+                break;
+            case R.id.tv_movie:
+                genre_id = 10770;
+                break;
+            case R.id.thriller:
+                genre_id = 53;
+                break;
+            case R.id.war:
+                genre_id = 10752;
+                break;
+            case R.id.western:
+                genre_id = 37;
+                break;
+        }
+        if(genre_id != 0){
+            filter = apiLinks.FILTER.length - 1;
+            searchType = 1;
         }
         showArrayList = new ArrayList<>();
         requestQueue = Volley.newRequestQueue(this);
         parseJSON();
-        Toast.makeText(this, "filtered by " + apiLinks.FILTER[filter], Toast.LENGTH_SHORT).show();
+        System.out.println(url);
+        if(genre_id == 0){
+            Toast.makeText(this, "filtered by " + apiLinks.FILTER[filter], Toast.LENGTH_SHORT).show();
+            genre_id = 0;
+        }
+        else{
+            Toast.makeText(this, "filtered by genre " + Genres.getList().get(genre_id), Toast.LENGTH_SHORT).show();
+        }
 
         return true;
 
@@ -257,8 +430,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
     //URL BUILDER
     public String buildUrl() {
-
-
         Uri.Builder builder = new Uri.Builder();
         builder.scheme("https")
                 .authority(apiLinks.MDB_BASE_URL)
@@ -276,6 +447,9 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 builder.appendQueryParameter("api_key", apiLinks.APIKEY)
                         .appendQueryParameter("language", apiLinks.LANGUAGE_TYPE[language]);
 
+                        if(searchType == 1){
+                            builder.appendQueryParameter("sort_by", "popularity.desc");
+                        }
                         if(genre_id != 0){
                             builder.appendQueryParameter("with_genres", Integer.toString(genre_id));
                         }
@@ -285,12 +459,11 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                         if(!searchText.equals("")){
                             builder.appendQueryParameter("query", searchText);
                         }
-                        if(region != (apiLinks.REGION.length - 1)){
-                            builder.appendQueryParameter("region", apiLinks.REGION[region]);
-                        }
+
+                        builder.appendQueryParameter("region", apiLinks.REGION[region]);
 
                         url = builder.build().toString();
-        System.out.println(url);
+        Log.d("Tag", url);
         return url;
     }
 
@@ -330,11 +503,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 parseJSON();
                 break;
 
-            case R.id.testButton:
-                Intent singUp = new Intent(this, Signup.class);
-                startActivity(singUp);
-                break;
-
             case R.id.loginBtn:
                 Intent login = new Intent(this, login.class);
                 startActivity(login);
@@ -346,18 +514,4 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         parseJSON();
         middleBtn.setText(Integer.toString(pageNumber));
     }
-
-//    @Override
-//    public void onItemClick(int position) {
-//        Intent detailIntent = new Intent(this, DetailActivity.class);
-//        Show clickedShow = showArrayList.get(position);
-//
-//        detailIntent.putExtra(EXTRA_POSTERPATH, clickedShow.getPosterpath());
-//        detailIntent.putExtra(EXTRA_TITLE, clickedShow.getTitle());
-//        detailIntent.putExtra(EXTRA_DESCRIPTION, clickedShow.getOverview());
-//        detailIntent.putExtra(EXTRA_TRAILER, clickedShow.getTrailerLink());
-//        detailIntent.putExtra(EXTRA_GENRE, clickedShow.getGenreToString());
-//
-//        startActivity(detailIntent );
-//    }
 }

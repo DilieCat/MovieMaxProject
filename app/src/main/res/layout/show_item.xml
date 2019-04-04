@@ -45,8 +45,7 @@
             android:layout_marginTop="13dp"
             android:layout_toEndOf="@+id/text_view_type_show"
             android:layout_toRightOf="@id/text_view_type_show"
-            android:maxWidth="200dp"
-            android:text="title" />
+            android:maxWidth="200dp" />
 
 
         <TextView
@@ -67,8 +66,7 @@
             android:layout_marginStart="2dp"
             android:layout_marginLeft="2dp"
             android:maxWidth="200dp"
-            android:paddingTop="10dp"
-            android:text="genre" />
+            android:paddingTop="10dp" />
         
         
     </RelativeLayout>
